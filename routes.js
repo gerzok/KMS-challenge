@@ -160,7 +160,34 @@ Response:
 }
 */
 router.post("/meal-plans", (req, res) => {
-  //Your code goes here
+  const { name, date, recipe_ids, notes } = req.body;
+
+  if (!name || !date || !recipe_ids) {
+    return res
+      .status(400)
+      .json({ error: "Name, date, and recipe_ids are required" });
+  }
+
+  db.run(
+    "INSERT INTO meal_plans (name, date, recipe_ids, notes) VALUES (?, ?, ?, ?)",
+    [name, date, recipe_ids, notes || null],
+    function (err) {
+      if (err) {
+        console.error(err);
+        return res.status(500).json({ error: "Error creating meal plan" });
+      }
+      res.status(201).json({
+        message: "Meal plan created successfully",
+        meal_plan: {
+          id: this.lastID,
+          name,
+          date,
+          recipe_ids: recipe_ids,
+          notes,
+        },
+      });
+    }
+  );
 });
 
 /*

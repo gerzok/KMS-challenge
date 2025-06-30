@@ -74,9 +74,11 @@ router.get("/recipes/:id", (req, res) => {
       console.error(err);
       return res.status(500).json({ error: "Error fetching recipe" });
     }
+
     if (!row) {
       return res.status(404).json({ error: "Recipe not found" });
     }
+
     res.json(row);
   });
 });
@@ -176,7 +178,7 @@ router.post("/meal-plans", (req, res) => {
         console.error(err);
         return res.status(500).json({ error: "Error creating meal plan" });
       }
-      res.status(201).json({
+      res.status(200).json({
         message: "Meal plan created successfully",
         meal_plan: {
           id: this.lastID,
@@ -228,7 +230,27 @@ Response:
 NOTE: If the meal plan with id is not found, return status 400 with error message.
 */
 router.delete("/meal-plans/:id", (req, res) => {
-  //Your code goes here
+  const { id } = req.params;
+
+  if (!id || isNaN(id)) {
+    return res.status(400).json({
+      error:
+        "Id parameter is required and must be a number. Example: /meal-plans/1",
+    });
+  }
+
+  db.run("DELETE FROM meal_plans WHERE id = ?", [id], function (err) {
+    if (err) {
+      console.error(err);
+      return res.status(500).json({ error: "Error deleting meal plan" });
+    }
+
+    if (this.changes === 0) {
+      return res.status(400).json({ error: "Meal plan not found" });
+    }
+
+    res.json({ message: "Meal plan deleted successfully" });
+  });
 });
 
 module.exports = router;

@@ -180,7 +180,15 @@ Expected format:
   ]
 */
 router.get("/meal-plans", (req, res) => {
-  //Your code goes here
+  const query = "SELECT * FROM meal_plans";
+
+  db.all(query, (err, rows) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).json({ error: "Error fetching meal plans" });
+    }
+    res.json(rows || []);
+  });
 });
 
 /*

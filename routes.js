@@ -23,15 +23,31 @@ Expected format:
 */
 
 router.get("/recipes", (req, res) => {
-  let query = "SELECT * FROM recipes";
+  const { category } = req.query;
 
-  db.all(query, (err, rows) => {
+  if (!category) {
+    return res.status(400).json({
+      error:
+        "Category parameter is required. Example: /recipes?category=dinner",
+    });
+  }
+
+  const query = "SELECT * FROM recipes WHERE category = ?";
+  const params = [category];
+
+  db.all(query, params, (err, rows) => {
     if (err) {
-      console.error(err);
-      return res.status(500).json({ error: "Error fetching recipes" });
+      console.error("Database error:", err);
+      return res.status(500).json({
+        error: "Server error while fetching recipes",
+      });
     }
 
-    res.json(rows || []);
+    if (!rows || rows.length === 0) {
+      return res.status(200).json([]);
+    }
+
+    res.json(rows);
   });
 });
 

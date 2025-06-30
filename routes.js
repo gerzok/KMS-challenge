@@ -25,15 +25,13 @@ Expected format:
 router.get("/recipes", (req, res) => {
   const { category } = req.query;
 
-  if (!category) {
-    return res.status(400).json({
-      error:
-        "Category parameter is required. Example: /recipes?category=dinner",
-    });
-  }
+  let query = "SELECT * FROM recipes";
+  const params = [];
 
-  const query = "SELECT * FROM recipes WHERE category = ?";
-  const params = [category];
+  if (category) {
+    query += " WHERE category = ?";
+    params.push(category);
+  }
 
   db.all(query, params, (err, rows) => {
     if (err) {
@@ -43,11 +41,7 @@ router.get("/recipes", (req, res) => {
       });
     }
 
-    if (!rows || rows.length === 0) {
-      return res.status(200).json([]);
-    }
-
-    res.json(rows);
+    res.json(rows || []);
   });
 });
 

@@ -66,7 +66,25 @@ Expected Format:
 NOTE: If the recipe with id is not found, return status 404 with message 'Recipe not found'
 */
 router.get("/recipes/:id", (req, res) => {
-  //Your code goes here
+  const { id } = req.params;
+
+  if (!id || isNaN(id)) {
+    return res.status(400).json({
+      error:
+        "Id parameter is required and must be a number. Example: /recipes/1",
+    });
+  }
+
+  db.get("SELECT * FROM recipes WHERE id = ?", [id], (err, row) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).json({ error: "Error fetching recipe" });
+    }
+    if (!row) {
+      return res.status(404).json({ error: "Recipe not found" });
+    }
+    res.json(row);
+  });
 });
 
 /*

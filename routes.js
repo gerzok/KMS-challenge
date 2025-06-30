@@ -113,7 +113,33 @@ Response:
 }
 */
 router.post("/recipes", (req, res) => {
-  //Your code goes here
+  const { name, category, instructions, ingredients, prep_time } = req.body;
+
+  if (!name || !category || !instructions || !ingredients || !prep_time) {
+    return res.status(400).json({ error: "All fields are required" });
+  }
+
+  db.run(
+    "INSERT INTO recipes (name, category, instructions, ingredients, prep_time) VALUES (?, ?, ?, ?, ?)",
+    [name, category, instructions, ingredients, prep_time],
+    function (err) {
+      if (err) {
+        console.error(err);
+        return res.status(500).json({ error: "Error adding recipe" });
+      }
+      res.status(200).json({
+        message: "Recipe added successfully",
+        recipe: {
+          id: this.lastID,
+          name,
+          category,
+          instructions,
+          ingredients,
+          prep_time,
+        },
+      });
+    }
+  );
 });
 
 /*

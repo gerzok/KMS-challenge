@@ -22,8 +22,17 @@ Expected format:
   ]
 */
 
-router.get('/recipes', (req, res) => {
+router.get("/recipes", (req, res) => {
+  let query = "SELECT * FROM recipes";
 
+  db.all(query, (err, rows) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).json({ error: "Error fetching recipes" });
+    }
+
+    res.json(rows || []);
+  });
 });
 
 /*
@@ -40,7 +49,7 @@ Expected Format:
     }
 NOTE: If the recipe with id is not found, return status 404 with message 'Recipe not found'
 */
-router.get('/recipes/:id', (req, res) => {
+router.get("/recipes/:id", (req, res) => {
   //Your code goes here
 });
 
@@ -69,7 +78,7 @@ Response:
         }
 }
 */
-router.post('/recipes', (req, res) => {
+router.post("/recipes", (req, res) => {
   //Your code goes here
 });
 
@@ -96,7 +105,7 @@ Response:
         }
 }
 */
-router.post('/meal-plans', (req, res) => {
+router.post("/meal-plans", (req, res) => {
   //Your code goes here
 });
 
@@ -116,7 +125,7 @@ Expected format:
     .
   ]
 */
-router.get('/meal-plans', (req, res) => {
+router.get("/meal-plans", (req, res) => {
   //Your code goes here
 });
 
@@ -129,7 +138,7 @@ Response:
 }
 NOTE: If the meal plan with id is not found, return status 400 with error message.
 */
-router.delete('/meal-plans/:id', (req, res) => {
+router.delete("/meal-plans/:id", (req, res) => {
   //Your code goes here
 });
 

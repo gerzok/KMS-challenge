@@ -1,7 +1,5 @@
-const e = require('express');
 let express = require("express");
 let app = express();
-let db = require("./database.js");
 
 const indexRouter = require("./routes");
 
@@ -14,7 +12,7 @@ if (process.env.NODE_ENV == "test") {
 }
 
 app.listen(HTTP_PORT, () => {
-
+  console.log(`Server running at http://localhost:${HTTP_PORT}`)
 });
 
 app.use(express.json());
